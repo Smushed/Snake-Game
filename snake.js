@@ -30,6 +30,8 @@ let snake = [
     {x: 110, y: 150}
 ];
 
+let score = 0;
+
 //Velocity
 let dx = 10;
 let dy = 0;
@@ -102,6 +104,8 @@ function advanceSnake() {
 
     const didEatFood = snake [0].x === foodX && snake[0].y === foodY;
     if (didEatFood){
+        score += 10;
+        document.getElementById("score").innerHTML = score;
         createFood();
     } else {
         snake.pop();
@@ -131,6 +135,9 @@ function drawFood(){
 
 // This is to keep the snake moving, the guts of the game
 function main() {
+    if (didGameEnd()) {
+        return;
+    }
     setTimeout(function onTick() {
         //Clears the canvas to get rid of the old snake
         clearCanvas();
@@ -143,6 +150,22 @@ function main() {
         //Call main again to keep up velocity
         main();
     }, 80)
+};
+
+//Determines if the game ends
+function didGameEnd() {
+    for (var i = 4; i < snake.length; i++) {
+        const didCollide = snake[i].x === snake[0].x && snake[i].y === snake[0].y;
+        if (didCollide){
+            return true;
+        };
+    };
+    const hitLeftWall = snake[0].x < 0;
+    const hitRightWall = snake[0].x > gameCanvas.width - 10;
+    const hitTopWall = snake[0].y < 0;
+    const hitBottomWall = snake[0].y > gameCanvas.height - 10;
+
+    return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall;
 };
 
 // This is for player input
